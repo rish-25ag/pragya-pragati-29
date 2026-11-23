@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta property="og:title" content="Happy 29th, Pragya &amp; Pragati!">
+<meta property="og:description" content="A little birthday surprise from Aishwarya &amp; Abhishek. Tap the gift to open.">
+<title>Pragya &amp; Pragati Turn 29</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700&family=Caveat:wght@600;700&display=swap">
+<style>
+/* Layout: a gift box that opens into one narrow, playful card column. Two of everything: one colour per twin. */
+:root{
+  --bg:#fdf2f6;
+  --bg2:#eef3ff;
+  --paper:#ffffff;
+  --ink:#3a2340;
+  --muted:#7a6380;
+  --twinA:#ff6fa3;   /* Pragya: bubblegum */
+  --twinB:#7c8cff;   /* Pragati: periwinkle */
+  --sun:#ffc94d;
+  --line:#f1d6e2;
+  --shadow:rgba(90,40,80,.14);
+  --f-display:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-hand:"Caveat","Comic Sans MS",cursive;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1e1426;--bg2:#161a33;--paper:#2a1f36;--ink:#fbeaf3;--muted:#c2abc9;
+  --twinA:#ff86b4;--twinB:#97a4ff;--sun:#ffd36b;--line:#3e2e4c;--shadow:rgba(0,0,0,.4);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1e1426;--bg2:#161a33;--paper:#2a1f36;--ink:#fbeaf3;--muted:#c2abc9;
+  --twinA:#ff86b4;--twinB:#97a4ff;--sun:#ffd36b;--line:#3e2e4c;--shadow:rgba(0,0,0,.4);color-scheme:dark}
+
+*{box-sizing:border-box}
+body{margin:0}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+[hidden]{display:none!important}
+img{max-width:100%}
+html,body{min-height:100%}
+body{
+  background:linear-gradient(160deg,var(--bg) 0%,var(--bg2) 100%) fixed;
+  background-color:var(--bg);
+  color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  overflow-x:hidden;
+}
+h1,h2,h3{font-family:var(--f-display);line-height:1.1;text-wrap:balance;margin:0}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--twinB);outline-offset:3px;border-radius:8px}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
+
+/* ---------- Gift gate ---------- */
+.gate{min-height:92vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;text-align:center;padding-block:40px}
+.gate p.kicker{font-family:var(--f-hand);font-size:1.9rem;color:var(--muted);margin:0}
+.gate h1{font-size:clamp(2rem,7vw,3.2rem)}
+.gate h1 .a{color:var(--twinA)} .gate h1 .b{color:var(--twinB)}
+.gift{position:relative;width:200px;height:190px;border:0;background:none;cursor:pointer;padding:0;animation:wiggle 2.4s ease-in-out infinite}
+.gift .box{position:absolute;left:14px;right:14px;bottom:0;height:120px;background:var(--twinA);border-radius:14px;box-shadow:0 14px 30px var(--shadow)}
+.gift .lid{position:absolute;left:0;right:0;top:44px;height:40px;background:var(--twinA);filter:brightness(1.08);border-radius:12px;transition:transform .7s cubic-bezier(.3,1.6,.5,1)}
+.gift .ribbonV{position:absolute;left:50%;width:28px;margin-left:-14px;top:44px;bottom:0;background:var(--twinB);border-radius:4px}
+.gift .bow{position:absolute;left:50%;top:6px;width:0;height:0}
+.gift .bow::before,.gift .bow::after{content:"";position:absolute;top:0;width:46px;height:40px;border:9px solid var(--twinB);border-radius:50% 50% 50% 50%/60% 60% 40% 40%}
+.gift .bow::before{right:2px;transform:rotate(-20deg)} .gift .bow::after{left:2px;transform:rotate(20deg)}
+.gift .lidwrap{position:absolute;inset:0;transition:transform .7s cubic-bezier(.3,1.6,.5,1)}
+.gift.open .lidwrap{transform:translateY(-90px) rotate(-18deg)}
+.gift.open{animation:none}
+.tap{font-weight:700;color:var(--muted);font-size:.95rem;letter-spacing:.08em;text-transform:uppercase}
+@keyframes wiggle{0%,80%,100%{transform:rotate(0)}84%{transform:rotate(-6deg)}88%{transform:rotate(6deg)}92%{transform:rotate(-4deg)}96%{transform:rotate(3deg)}}
+
+/* ---------- Surprise content ---------- */
+main{max-width:620px;margin:0 auto;padding-block:28px 64px;display:flex;flex-direction:column;gap:44px}
+.reveal{animation:rise .8s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+
+.hero{text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center}
+.hero .big29{font-family:var(--f-display);font-weight:800;font-size:clamp(6rem,30vw,10rem);line-height:.9;
+  background:linear-gradient(90deg,var(--twinA) 0 50%,var(--twinB) 50% 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero h1{font-size:clamp(1.9rem,6.5vw,2.8rem)}
+.hero .sub{color:var(--muted);margin:0;max-width:30ch}
+
+.polaroids{display:flex;justify-content:center;gap:18px;flex-wrap:wrap}
+.pol{background:var(--paper);padding:12px 12px 14px;width:min(240px,44vw);box-shadow:0 12px 28px var(--shadow);border-radius:6px;display:flex;flex-direction:column;gap:10px}
+.pol:nth-child(1){transform:rotate(-4deg)} .pol:nth-child(2){transform:rotate(3.5deg)}
+.pol .photo{aspect-ratio:4/5;max-width:100%;border-radius:3px;overflow:hidden;display:grid;place-items:center;text-align:center;font-size:.85rem;color:var(--muted);padding:10px}
+.pol:nth-child(1) .photo{background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--twinA) 14%,var(--paper)) 0 12px,color-mix(in srgb,var(--twinA) 22%,var(--paper)) 12px 24px)}
+.pol:nth-child(2) .photo{background:repeating-linear-gradient(-45deg,color-mix(in srgb,var(--twinB) 14%,var(--paper)) 0 12px,color-mix(in srgb,var(--twinB) 22%,var(--paper)) 12px 24px)}
+.pol .photo img{width:100%;height:100%;object-fit:cover;display:block}
+.pol .cap{font-family:var(--f-hand);font-size:1.7rem;text-align:center;line-height:1}
+.pol:nth-child(1) .cap{color:var(--twinA)} .pol:nth-child(2) .cap{color:var(--twinB)}
+
+.letter{background:var(--paper);border-radius:22px;padding:28px 26px;box-shadow:0 10px 30px var(--shadow);border:2px dashed var(--line);display:flex;flex-direction:column;gap:14px}
+.letter p{margin:0}
+.letter .dear{font-family:var(--f-hand);font-size:2rem;line-height:1.1}
+.letter .sign{font-family:var(--f-hand);font-size:1.8rem;line-height:1.15;text-align:right}
+.letter .sign span{display:block;font-size:2.1rem;color:var(--twinA)}
+
+section h2{font-size:1.7rem;text-align:center}
+section .hint{text-align:center;color:var(--muted);margin:4px 0 0;font-size:.95rem}
+
+/* cake */
+.cakewrap{display:flex;flex-direction:column;align-items:center;gap:14px}
+.cake{position:relative;width:240px;height:200px;max-width:100%}
+.tier{position:absolute;left:50%;transform:translateX(-50%);border-radius:14px 14px 10px 10px}
+.t1{bottom:0;width:240px;height:78px;background:var(--twinB)}
+.t2{bottom:70px;width:180px;height:64px;background:var(--twinA)}
+.tier::before{content:"";position:absolute;left:0;right:0;top:0;height:18px;background:var(--paper);border-radius:14px 14px 0 0;
+  -webkit-mask:radial-gradient(circle at 10px 18px,transparent 9px,#000 9.5px) 0 0/20px 100%;mask:radial-gradient(circle at 10px 18px,transparent 9px,#000 9.5px) 0 0/20px 100%}
+.candles{position:absolute;bottom:132px;left:50%;transform:translateX(-50%);display:flex;gap:46px}
+.candle{position:relative;width:46px;height:60px;border:0;background:none;cursor:pointer;padding:0}
+.candle .stick{position:absolute;bottom:0;left:50%;margin-left:-8px;width:16px;height:44px;border-radius:4px;
+  background:repeating-linear-gradient(135deg,var(--paper) 0 6px,var(--sun) 6px 12px)}
+.candle .num{position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);font-family:var(--f-display);font-weight:800;font-size:0}
+.flame{position:absolute;left:50%;bottom:44px;width:16px;height:24px;margin-left:-8px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;
+  background:radial-gradient(circle at 50% 70%,#fff6c9 0 25%,var(--sun) 45%,#ff8a3d 100%);animation:flicker .18s ease-in-out infinite alternate;transform-origin:50% 100%;transition:opacity .3s, transform .3s}
+.candle.out .flame{opacity:0;transform:scale(.2)}
+.candle.out::after{content:"";position:absolute;left:50%;bottom:48px;width:6px;height:20px;margin-left:-3px;border-radius:6px;background:var(--muted);opacity:.0;animation:smoke 1.4s ease-out}
+@keyframes flicker{from{transform:rotate(-4deg) scaleY(1)}to{transform:rotate(4deg) scaleY(1.08)}}
+@keyframes smoke{0%{opacity:.5;transform:translateY(0)}100%{opacity:0;transform:translateY(-30px) scaleX(2)}}
+.candlelabels{display:flex;gap:22px;font-family:var(--f-hand);font-size:1.4rem}
+.candlelabels span{width:70px;text-align:center}
+.candlelabels span:first-child{color:var(--twinA)} .candlelabels span:last-child{color:var(--twinB)}
+.wished{font-family:var(--f-display);font-weight:700;font-size:1.3rem;color:var(--twinA);min-height:1.6em;text-align:center}
+
+/* 30s loading */
+.loader{background:var(--paper);border-radius:22px;padding:24px;box-shadow:0 10px 30px var(--shadow);display:flex;flex-direction:column;gap:12px}
+.loader .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-weight:700}
+.loader .pct{font-family:var(--f-display);font-size:1.6rem;font-variant-numeric:tabular-nums;color:var(--twinB)}
+.bar{height:22px;border-radius:999px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--twinA),var(--twinB));transition:width 2.2s cubic-bezier(.2,.8,.2,1)}
+.loader small{color:var(--muted);font-size:.92rem}
+
+/* bucket list */
+.list{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:10px}
+.list label{display:flex;gap:12px;align-items:center;background:var(--paper);border-radius:14px;padding:12px 16px;box-shadow:0 4px 14px var(--shadow);cursor:pointer}
+.list input{width:22px;height:22px;accent-color:var(--twinA);flex:none}
+.list input:checked + span{text-decoration:line-through;text-decoration-color:var(--twinA);text-decoration-thickness:2px;color:var(--muted)}
+
+.foot{text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center}
+.foot .xo{font-family:var(--f-hand);font-size:2rem}
+.btn{border:0;cursor:pointer;background:var(--twinA);color:#fff;font-weight:700;padding:12px 22px;border-radius:999px;box-shadow:0 8px 18px var(--shadow);transition:transform .15s}
+.btn:hover{transform:translateY(-2px)} .btn:active{transform:translateY(1px)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<div class="gate" id="gate">
+  <p class="kicker">psst… a little something arrived for</p>
+  <h1><span class="a">Pragya</span> &amp; <span class="b">Pragati</span></h1>
+  <button class="gift" id="gift" aria-label="Open your birthday surprise">
+    <span class="box"></span>
+    <span class="ribbonV"></span>
+    <span class="lidwrap"><span class="lid"></span><span class="bow"></span></span>
+  </button>
+  <span class="tap">Tap the gift to open</span>
+</div>
+
+<main id="surprise" hidden>
+  <div class="hero reveal">
+    <div class="big29" aria-hidden="true">29</div>
+    <h1>Happy Birthday, Pragya &amp; Pragati!</h1>
+    <p class="sub">Two birthdays, one cake, double the love. Twenty-nine looks good on both of you.</p>
+  </div>
+
+  <div class="polaroids reveal" style="animation-delay:.15s">
+    <figure class="pol" style="margin:0">
+      <div class="photo" id="photo1">Photo of Pragya coming soon</div>
+      <figcaption class="cap">Pragya</figcaption>
+    </figure>
+    <figure class="pol" style="margin:0">
+      <div class="photo" id="photo2">Photo of Pragati coming soon</div>
+      <figcaption class="cap">Pragati</figcaption>
+    </figure>
+  </div>
+
+  <article class="letter reveal" style="animation-delay:.3s">
+    <p class="dear">Dear Pragya &amp; Pragati,</p>
+    <p>Happy 29th birthday to the two people who decided the world needed them both at once. Lucky us.</p>
+    <p>This is your very last lap around the sun before the big 3-0, so let's make it a good one. More trips, more laughs, more cafe dates, more Mintella sessions, more cake, and absolutely zero worrying about age.</p>
+    <p>Thank you for being the fun, the warmth and the chaos in our lives. We love you both, twice over.</p>
+    <p class="sign">With all our love,<span>Aishwarya &amp; Abhishek</span></p>
+  </article>
+
+  <section class="reveal">
+    <h2>Make a wish</h2>
+    <p class="hint">One candle each. Tap yours to blow it out.</p>
+    <div class="cakewrap" style="margin-top:18px">
+      <div class="cake">
+        <div class="candles">
+          <button class="candle" data-who="Pragya" aria-label="Blow out Pragya's candle"><span class="stick"></span><span class="flame"></span></button>
+          <button class="candle" data-who="Pragati" aria-label="Blow out Pragati's candle"><span class="stick"></span><span class="flame"></span></button>
+        </div>
+        <div class="tier t2"></div>
+        <div class="tier t1"></div>
+      </div>
+      <div class="candlelabels"><span>Pragya</span><span>Pragati</span></div>
+      <div class="wished" id="wished" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="loader">
+      <div class="row"><span>Loading your 30s…</span><span class="pct" id="pct">0%</span></div>
+      <div class="bar"><i id="barfill"></i></div>
+      <small>29 of 30 years complete. One more year of your twenties, so enjoy every bit of it.</small>
+    </div>
+  </section>
+
+  <div class="foot reveal">
+    <p class="xo" style="margin:0">Happy birthday, you two!</p>
+    <button class="btn" id="again">More confetti</button>
+  </div>
+</main>
+
+<script>
+// ---- Add photo links here later (leave empty for the placeholder) ----
+const PHOTOS = { photo1: "", photo2: "" };
+
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// Photos
+for (const [id, src] of Object.entries(PHOTOS)) {
+  if (src) { const el = document.getElementById(id); el.textContent = ''; const img = new Image(); img.src = src; img.alt = id === 'photo1' ? 'Pragya' : 'Pragati'; el.appendChild(img); }
+}
+
+// Confetti
+const cv = document.getElementById('confetti'), cx = cv.getContext('2d');
+let parts = [], raf = null;
+function size(){ cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio; cx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0); }
+size(); addEventListener('resize', size);
+function colors(){ const s = getComputedStyle(document.documentElement); return ['--twinA','--twinB','--sun'].map(v => s.getPropertyValue(v).trim()); }
+function burst(n = 160){
+  if (reduce) return;
+  const c = colors(), w = innerWidth;
+  for (let i = 0; i < n; i++) parts.push({
+    x: w/2 + (Math.random()-.5)*w*.4, y: innerHeight*.35, vx: (Math.random()-.5)*12, vy: -Math.random()*13-4,
+    s: Math.random()*7+5, r: Math.random()*6, vr: (Math.random()-.5)*.3, c: c[i%3], shape: Math.random() < .25 ? 'heart' : 'rect', life: 0
+  });
+  if (!raf) tick();
+}
+function heart(x,y,s){ cx.beginPath(); cx.moveTo(0,s*.3); cx.bezierCurveTo(0,0,-s*.5,0,-s*.5,s*.3); cx.bezierCurveTo(-s*.5,s*.6,0,s*.8,0,s); cx.bezierCurveTo(0,s*.8,s*.5,s*.6,s*.5,s*.3); cx.bezierCurveTo(s*.5,0,0,0,0,s*.3); cx.fill(); }
+function tick(){
+  cx.clearRect(0,0,innerWidth,innerHeight);
+  parts = parts.filter(p => p.y < innerHeight + 40 && p.life < 400);
+  for (const p of parts){
+    p.vy += .28; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life++;
+    cx.save(); cx.translate(p.x,p.y); cx.rotate(p.r); cx.fillStyle = p.c;
+    if (p.shape === 'heart') heart(0,0,p.s*1.6); else cx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);
+    cx.restore();
+  }
+  raf = parts.length ? requestAnimationFrame(tick) : null;
+  if (!raf) cx.clearRect(0,0,innerWidth,innerHeight);
+}
+
+// Open gift
+const gift = document.getElementById('gift'), gate = document.getElementById('gate'), main = document.getElementById('surprise');
+gift.addEventListener('click', () => {
+  if (gift.classList.contains('open')) return;
+  gift.classList.add('open');
+  burst(200);
+  setTimeout(() => {
+    gate.hidden = true; main.hidden = false; scrollTo({top:0});
+    burst(120);
+    setTimeout(fillBar, 400);
+  }, reduce ? 0 : 900);
+});
+
+// 30s loader
+function fillBar(){
+  const target = 29/30*100, el = document.getElementById('pct');
+  document.getElementById('barfill').style.width = target + '%';
+  const t0 = performance.now(), dur = reduce ? 0 : 2200;
+  (function step(t){ const k = dur ? Math.min(1,(t-t0)/dur) : 1; const e = 1 - Math.pow(1-k,3);
+    el.textContent = (target*e).toFixed(1) + '%'; if (k < 1) requestAnimationFrame(step); })(t0);
+}
+
+// Candles
+const wished = document.getElementById('wished');
+document.querySelectorAll('.candle').forEach(c => c.addEventListener('click', () => {
+  if (c.classList.contains('out')) return;
+  c.classList.add('out'); c.setAttribute('aria-label', c.dataset.who + "'s wish is made");
+  const outs = document.querySelectorAll('.candle.out').length;
+  if (outs === 1) wished.textContent = c.dataset.who + " made a wish! Your turn, twin.";
+  else { wished.textContent = "Both wishes made. May they all come true!"; burst(220); }
+}));
+
+document.getElementById('again').addEventListener('click', () => burst(220));
+</script>
+</body>
+</html>
