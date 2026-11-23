@@ -88,7 +88,8 @@ main{max-width:620px;margin:0 auto;padding-block:28px 64px;display:flex;flex-dir
 .pol .photo{aspect-ratio:4/5;max-width:100%;border-radius:3px;overflow:hidden;display:grid;place-items:center;text-align:center;font-size:.85rem;color:var(--muted);padding:10px}
 .pol:nth-child(1) .photo{background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--twinA) 14%,var(--paper)) 0 12px,color-mix(in srgb,var(--twinA) 22%,var(--paper)) 12px 24px)}
 .pol:nth-child(2) .photo{background:repeating-linear-gradient(-45deg,color-mix(in srgb,var(--twinB) 14%,var(--paper)) 0 12px,color-mix(in srgb,var(--twinB) 22%,var(--paper)) 12px 24px)}
-.pol .photo img{width:100%;height:100%;object-fit:cover;display:block}
+.pol .photo{padding:0}
+.pol .photo img{width:100%;height:100%;object-fit:cover;object-position:50% 20%;display:block}
 .pol .cap{font-family:var(--f-hand);font-size:1.7rem;text-align:center;line-height:1}
 .pol:nth-child(1) .cap{color:var(--twinA)} .pol:nth-child(2) .cap{color:var(--twinB)}
 
@@ -223,7 +224,7 @@ section .hint{text-align:center;color:var(--muted);margin:4px 0 0;font-size:.95r
 
 <script>
 // ---- Add photo links here later (leave empty for the placeholder) ----
-const PHOTOS = { photo1: "", photo2: "" };
+const PHOTOS = { photo1: "pragya.jpg", photo2: "pragati.jpg" };
 
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
