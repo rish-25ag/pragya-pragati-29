@@ -145,6 +145,12 @@ section .hint{text-align:center;color:var(--muted);margin:4px 0 0;font-size:.95r
 .btn{border:0;cursor:pointer;background:var(--twinA);color:#fff;font-weight:700;padding:12px 22px;border-radius:999px;box-shadow:0 8px 18px var(--shadow);transition:transform .15s}
 .btn:hover{transform:translateY(-2px)} .btn:active{transform:translateY(1px)}
 
+.music{position:fixed;z-index:60;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));
+  display:flex;align-items:center;gap:8px;border:0;cursor:pointer;background:var(--paper);color:var(--ink);font-weight:700;font-size:.9rem;
+  padding:10px 16px 10px 12px;border-radius:999px;box-shadow:0 8px 22px var(--shadow)}
+.music svg{width:22px;height:22px;fill:var(--twinA)}
+.music.playing svg{animation:bob .9s ease-in-out infinite alternate}
+@keyframes bob{from{transform:translateY(1px) rotate(-8deg)}to{transform:translateY(-2px) rotate(8deg)}}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
@@ -153,6 +159,7 @@ section .hint{text-align:center;color:var(--muted);margin:4px 0 0;font-size:.95r
 <body>
 
 <canvas id="confetti" aria-hidden="true"></canvas>
+<button class="music" id="music" hidden aria-label="Play the birthday song"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 17.5a3 3 0 1 1-2-2.83V5.2l12-2.7v12a3 3 0 1 1-2-2.83V7.6l-8 1.8z"/></svg><span id="musiclabel">Play song</span></button>
 
 <div class="gate" id="gate">
   <p class="kicker">psst… a little something arrived for</p>
@@ -262,11 +269,60 @@ function tick(){
   if (!raf) cx.clearRect(0,0,innerWidth,innerHeight);
 }
 
+// Birthday song: a little music box, synthesised in the browser
+let actx = null, songTimer = null, songNodes = [];
+const B = 0.42; // seconds per beat
+const N = {G2:98,C3:130.81,F3:174.61,G3:196,E3:164.81,G4:392,A4:440,B4:493.88,C5:523.25,D5:587.33,E5:659.25,F5:698.46,G5:783.99};
+const MELODY = [['G4',0,.75],['G4',.75,.25],['A4',1,1],['G4',2,1],['C5',3,1],['B4',4,2],
+  ['G4',6,.75],['G4',6.75,.25],['A4',7,1],['G4',8,1],['D5',9,1],['C5',10,2],
+  ['G4',12,.75],['G4',12.75,.25],['G5',13,1],['E5',14,1],['C5',15,1],['B4',16,1],['A4',17,2.5],
+  ['F5',19.5,.75],['F5',20.25,.25],['E5',20.5,1],['C5',21.5,1],['D5',22.5,1],['C5',23.5,3]];
+const BASS = [['C3',1],['E3',2],['G3',3],['G2',4],['G3',5.5],['G2',7],['G3',8.5],['C3',10],['G3',11],['C3',13],['E3',14.5],['F3',16],['F3',17.5],
+  ['C3',20.5],['G2',22.5],['C3',23.5]];
+const SONG_LEN = 27;
+function tone(freq, t, dur, vol, out){
+  const g = actx.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+.012); g.gain.exponentialRampToValueAtTime(0.0001,t+Math.max(dur,0.5)+.9);
+  g.connect(out); songNodes.push(g);
+  [[1,'sine',1],[2,'sine',.35],[4.01,'sine',.08]].forEach(([m,type,v])=>{
+    const o = actx.createOscillator(), og = actx.createGain(); o.type=type; o.frequency.value=freq*m; og.gain.value=v;
+    o.connect(og).connect(g); o.start(t); o.stop(t+Math.max(dur,0.5)+1); songNodes.push(o);
+  });
+}
+function playSong(){
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    if (actx.state==='suspended') actx.resume();
+  }catch(e){ return; }
+  stopSong(true);
+  const master = actx.createGain(); master.gain.value = .5; master.connect(actx.destination);
+  const dl = actx.createDelay(); dl.delayTime.value = .27; const fb = actx.createGain(); fb.gain.value = .22;
+  master.connect(dl); dl.connect(fb).connect(dl); dl.connect(actx.destination); songNodes.push(master,dl,fb);
+  const t0 = actx.currentTime + .15;
+  MELODY.forEach(([n,b,d]) => tone(N[n], t0+b*B, d*B, .32, master));
+  BASS.forEach(([n,b]) => tone(N[n], t0+b*B, .8*B, .12, master));
+  setMusicUI(true);
+  songTimer = setTimeout(() => setMusicUI(false), SONG_LEN*B*1000);
+}
+function stopSong(quiet){
+  clearTimeout(songTimer);
+  songNodes.forEach(n => { try{ n.stop ? n.stop() : n.disconnect(); }catch(e){} }); songNodes = [];
+  if (!quiet) setMusicUI(false);
+}
+const musicBtn = document.getElementById('music'), musicLabel = document.getElementById('musiclabel');
+function setMusicUI(on){
+  musicBtn.classList.toggle('playing', on);
+  musicLabel.textContent = on ? 'Stop song' : 'Play song';
+  musicBtn.setAttribute('aria-label', on ? 'Stop the birthday song' : 'Play the birthday song');
+}
+musicBtn.addEventListener('click', () => musicBtn.classList.contains('playing') ? stopSong() : playSong());
+
 // Open gift
 const gift = document.getElementById('gift'), gate = document.getElementById('gate'), main = document.getElementById('surprise');
 gift.addEventListener('click', () => {
   if (gift.classList.contains('open')) return;
   gift.classList.add('open');
+  playSong();
+  musicBtn.hidden = false;
   burst(200);
   setTimeout(() => {
     gate.hidden = true; main.hidden = false; scrollTo({top:0});
