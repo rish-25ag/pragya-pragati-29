@@ -269,8 +269,8 @@ function tick(){
   if (!raf) cx.clearRect(0,0,innerWidth,innerHeight);
 }
 
-// Birthday song: a little music box, synthesised in the browser
-let actx = null, songTimer = null, songNodes = [];
+// Birthday song: a music box, rendered once into a normal audio track
+// (an <audio> element plays on phones even in silent mode, unlike live Web Audio)
 const B = 0.42; // seconds per beat
 const N = {G2:98,C3:130.81,F3:174.61,G3:196,E3:164.81,G4:392,A4:440,B4:493.88,C5:523.25,D5:587.33,E5:659.25,F5:698.46,G5:783.99};
 const MELODY = [['G4',0,.75],['G4',.75,.25],['A4',1,1],['G4',2,1],['C5',3,1],['B4',4,2],
@@ -279,35 +279,72 @@ const MELODY = [['G4',0,.75],['G4',.75,.25],['A4',1,1],['G4',2,1],['C5',3,1],['B
   ['F5',19.5,.75],['F5',20.25,.25],['E5',20.5,1],['C5',21.5,1],['D5',22.5,1],['C5',23.5,3]];
 const BASS = [['C3',1],['E3',2],['G3',3],['G2',4],['G3',5.5],['G2',7],['G3',8.5],['C3',10],['G3',11],['C3',13],['E3',14.5],['F3',16],['F3',17.5],
   ['C3',20.5],['G2',22.5],['C3',23.5]];
-const SONG_LEN = 27;
-function tone(freq, t, dur, vol, out){
-  const g = actx.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+.012); g.gain.exponentialRampToValueAtTime(0.0001,t+Math.max(dur,0.5)+.9);
-  g.connect(out); songNodes.push(g);
-  [[1,'sine',1],[2,'sine',.35],[4.01,'sine',.08]].forEach(([m,type,v])=>{
-    const o = actx.createOscillator(), og = actx.createGain(); o.type=type; o.frequency.value=freq*m; og.gain.value=v;
-    o.connect(og).connect(g); o.start(t); o.stop(t+Math.max(dur,0.5)+1); songNodes.push(o);
-  });
+const SONG_SEC = 27*B + 1.5, RATE = 44100;
+const song = new Audio(); song.preload = 'auto'; song.setAttribute('playsinline','');
+let songReady = false;
+
+function scheduleSong(ctx, out, t0){
+  function tone(freq, t, dur, vol){
+    const g = ctx.createGain(); g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+.012); g.gain.exponentialRampToValueAtTime(0.0001,t+Math.max(dur,0.5)+.9);
+    g.connect(out);
+    [[1,.9],[2,.3],[4.01,.07]].forEach(([m,v])=>{
+      const o = ctx.createOscillator(), og = ctx.createGain(); o.type='sine'; o.frequency.value=freq*m; og.gain.value=v;
+      o.connect(og).connect(g); o.start(t); o.stop(t+Math.max(dur,0.5)+1);
+    });
+  }
+  MELODY.forEach(([n,b,d]) => tone(N[n], t0+b*B, d*B, .42));
+  BASS.forEach(([n,b]) => tone(N[n], t0+b*B, .8*B, .16));
 }
-function playSong(){
+function toWav(buf){
+  const d = buf.getChannelData(0), n = d.length, ab = new ArrayBuffer(44+n*2), v = new DataView(ab);
+  const w = (o,s)=>{ for(let i=0;i<s.length;i++) v.setUint8(o+i,s.charCodeAt(i)); };
+  let peak = 0; for (let i=0;i<n;i++) peak = Math.max(peak, Math.abs(d[i]));
+  const k = peak ? .9/peak : 1;
+  w(0,'RIFF'); v.setUint32(4,36+n*2,true); w(8,'WAVE'); w(12,'fmt '); v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
+  v.setUint32(24,RATE,true); v.setUint32(28,RATE*2,true); v.setUint16(32,2,true); v.setUint16(34,16,true); w(36,'data'); v.setUint32(40,n*2,true);
+  for (let i=0;i<n;i++) v.setInt16(44+i*2, Math.max(-1,Math.min(1,d[i]*k))*32767, true);
+  return new Blob([ab],{type:'audio/wav'});
+}
+(async function renderSong(){
   try{
-    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
-    if (actx.state==='suspended') actx.resume();
-  }catch(e){ return; }
-  stopSong(true);
-  const master = actx.createGain(); master.gain.value = .5; master.connect(actx.destination);
-  const dl = actx.createDelay(); dl.delayTime.value = .27; const fb = actx.createGain(); fb.gain.value = .22;
-  master.connect(dl); dl.connect(fb).connect(dl); dl.connect(actx.destination); songNodes.push(master,dl,fb);
-  const t0 = actx.currentTime + .15;
-  MELODY.forEach(([n,b,d]) => tone(N[n], t0+b*B, d*B, .32, master));
-  BASS.forEach(([n,b]) => tone(N[n], t0+b*B, .8*B, .12, master));
+    const Off = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+    const ctx = new Off(1, Math.ceil(SONG_SEC*RATE), RATE);
+    const master = ctx.createGain(); master.gain.value = .5; master.connect(ctx.destination);
+    const dl = ctx.createDelay(); dl.delayTime.value = .27; const fb = ctx.createGain(); fb.gain.value = .22;
+    master.connect(dl); dl.connect(fb).connect(dl); dl.connect(ctx.destination);
+    scheduleSong(ctx, master, .05);
+    const buf = await new Promise((res,rej)=>{ const p = ctx.startRendering(); if (p && p.then) p.then(res,rej); else ctx.oncomplete = e => res(e.renderedBuffer); });
+    song.src = URL.createObjectURL(toWav(buf)); song.load(); songReady = true;
+    if (wantSong) playSong();
+  }catch(e){ console.warn('song render failed', e); }
+})();
+
+let wantSong = false;
+function playSong(){
+  wantSong = true;
+  if (!songReady) return;           // will start as soon as the track is ready
+  try{ song.currentTime = 0; }catch(e){}
+  unlockLive();
+  const p = song.play(); if (p && p.catch) p.catch(playLive);
   setMusicUI(true);
-  songTimer = setTimeout(() => setMusicUI(false), SONG_LEN*B*1000);
 }
-function stopSong(quiet){
-  clearTimeout(songTimer);
-  songNodes.forEach(n => { try{ n.stop ? n.stop() : n.disconnect(); }catch(e){} }); songNodes = [];
-  if (!quiet) setMusicUI(false);
+// Backup: live Web Audio, unlocked during the tap, used only if the track is refused
+let liveCtx = null, liveOut = null, liveTimer = null;
+function unlockLive(){
+  try{ liveCtx = liveCtx || new (window.AudioContext||window.webkitAudioContext)(); if (liveCtx.state !== 'running') liveCtx.resume(); }catch(e){}
 }
+function playLive(){
+  if (!liveCtx) return setMusicUI(false);
+  try{
+    liveOut = liveCtx.createGain(); liveOut.gain.value = .5; liveOut.connect(liveCtx.destination);
+    scheduleSong(liveCtx, liveOut, liveCtx.currentTime + .1);
+    setMusicUI(true); clearTimeout(liveTimer); liveTimer = setTimeout(() => setMusicUI(false), SONG_SEC*1000);
+  }catch(e){ setMusicUI(false); }
+}
+function stopSong(){ wantSong = false; song.pause(); if (liveOut){ try{ liveOut.disconnect(); }catch(e){} liveOut = null; } clearTimeout(liveTimer); setMusicUI(false); }
+song.addEventListener('ended', () => { wantSong = false; setMusicUI(false); });
+song.addEventListener('pause', () => setMusicUI(false));
+song.addEventListener('play', () => setMusicUI(true));
 const musicBtn = document.getElementById('music'), musicLabel = document.getElementById('musiclabel');
 function setMusicUI(on){
   musicBtn.classList.toggle('playing', on);
